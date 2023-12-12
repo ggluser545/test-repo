@@ -9,5 +9,263 @@ Initializing a local Git repository
 
 Run the command git init. This initializes a Git repository in the current directory.
 Add your test files to the staging area with git add ..
-Commit the changes with a descriptive message using git commit -m "Adding test files for AWS deployment".
+Commit the changes with a descriptive message using git commit -m "Adding test files".
 
+
+Connecting your local repository to the remote repository on GitHub:
+git remote add origin https://github.com/ggluser545/aws-deployment-test.git
+
+
+git remote add origin https://github.com/ggluser545/test-repo.git
+
+Pushing your local repository to GitHub:
+
+Run the command git push -u origin master. 
+(This pushes your local master branch to the remote repository on GitHub.)
+
+
+Add the Public Key to GitHub:
+
+Head over to your GitHub account and navigate to Settings > SSH keys and GPG keys.
+
+Convert your .pem file to OpenSSH format:
+
+Open a terminal window on your local machine.
+Run the command openssl rsa -in your_key.pem -out your_key.pub -pubout -outform PEM. Replace your_key.pem with the actual name of your .pem file.
+This command extracts the public key from your .pem file and saves it in a new file named your_key.pub with the required format for GitHub.
+
+Run the command : openssl rsa -in test-git.pem -out test-git.pub -pubout -outform PEM
+
+else : 
+ssh-keygen -t rsa -b 4096 -C "3.111.232.13" -f ./id_rsa
+
+this gave : id_rsa.pub, id_rsa
+
+id_rsa: This is your private key. Keep it secure and do not share it.
+
+id_rsa.pub: This is your public key. You can share this with others or use it for authentication with services like GitHub or GitLab.
+
+(both are needed)
+else : 
+ssh-keygen -y -f test-git.pem > test-git.pub 
+
+(works!)
+
+Open File Explorer and navigate to your home directory. Look for a folder named .ssh. If it doesn't exist, you can create it.
+(for keys.)
+
+copy test-git.pub C:\Users\Samudra\.ssh
+copy test-git C:\Users\Samudra\.ssh
+for ec2 
+
+navigate to ~/.ssh
+
+cd ~/.ssh
+
+sudo vim authorized_keys
+
+
+Verify SSH Agent:
+Ensure that your SSH agent is running and that the private key is added to the agent. Run the following commands on your local machine:
+
+git bash
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+ssh-add ~/.ssh/test-git
+
+or cmd 
+
+ssh-agent -s
+ssh-add C:\Users\YourUsername\.ssh\id_rsa
+
+paraphrase : no
+(
+    Samudra@DESKTOP-ISS0AMG MINGW64 ~
+$ ssh-add ~/.ssh/test-git
+Enter passphrase for /c/Users/Samudra/.ssh/test-git:
+Identity added: /c/Users/Samudra/.ssh/test-git (3.111.232.13)
+
+)
+
+Click on "New SSH key" and paste the contents of your public key file (the one ending in ".pub").
+
+
+Give your key a descriptive title (e.g., "EC2-Deployment-Key") and click "Add key".
+This ensures GitHub recognizes your EC2 instance as authorized to access the repository.
+
+
+
+Verify your SSH access: Make sure you can successfully connect to your EC2 instance using SSH from your local machine with your PEM key.
+Configure the Git remote: In your local Git repository, use the git remote add command to specify your EC2 instance as a remote named "production" or any other name you prefer. The command will look like this:
+git remote add production ssh://ubuntu@<your_ec2_public_dns>:22/path/to/your/repository.git
+
+git remote add production ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
+
+
+
+After adding the new remote, you can verify it using:
+git remote -v
+(
+origin  https://github.com/ggluser545/test-repo.git (fetch)
+origin  https://github.com/ggluser545/test-repo.git (push)
+production      ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git (fetch)
+production      ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git (push)
+)
+
+ssh-add -l
+
+Push your code: Once the remote is configured, you can push your local changes to the EC2 instance using the git push command:
+git push production master
+
+
+all the above in git bash 
+
+
+(
+    Install OpenSSH:
+Ensure that OpenSSH is installed on your Windows machine. You can install it via the Windows Features menu.
+
+    Open the "Settings" app.
+    Go to "Apps" > "Optional Features" > "Add a feature."
+    Look for "OpenSSH Client" and "OpenSSH Server" and make sure they are installed.
+
+Start SSH Agent Manually:
+If you're unable to start the ssh-agent service, you can try starting it manually for the current session:
+
+Open a new Git Bash or Command Prompt window and run:
+
+bash
+
+eval $(ssh-agent)
+
+Then add your private key:
+
+bash
+
+ssh-add ~/.ssh/test-git
+
+This will start the ssh-agent for the current session. Keep in mind that it won't persist across sessions unless the service is properly installed and running.
+
+Check Service Status:
+Open the "Services" application on your Windows machine (services.msc). Look for the "OpenSSH Authentication Agent" service and ensure that it is set to "Automatic" and that it's started.
+
+Restart Your Machine:
+Sometimes, a simple restart can resolve service-related issues. After making any changes, restart your machine and try the ssh-agent and git push commands again.
+)
+
+(
+    $ eval "$(ssh-agent -s)"
+Agent pid 515
+
+Samudra@DESKTOP-ISS0AMG MINGW64 ~
+$ ssh-add C:/Users/Samudra/.ssh/test-git
+Enter passphrase for C:/Users/Samudra/.ssh/test-git:
+Identity added: C:/Users/Samudra/.ssh/test-git (3.111.232.13)
+
+Samudra@DESKTOP-ISS0AMG MINGW64 ~
+$ ssh-add -l
+4096 SHA256:Kcw2K8an53QCKn2mj6KYFHZaMz+admt7lgcSgCAPcnM 3.111.232.13 (RSA)
+
+Samudra@DESKTOP-ISS0AMG MINGW64 ~
+$
+
+)
+
+
+also install git on ec2 before all that..
+
+
+sudo git init --bare test-repo.git
+
+Initialized empty Git repository in /var/www/test/test-repo.git/
+
+sudo chown -R ec2-user:ec2-user test-repo.git
+
+(
+    Automating deployments using Git hooks is a powerful way to streamline your workflow. Git hooks are scripts that run at specific points in the Git lifecycle, allowing you to trigger custom actions. For deployment automation, you can use the post-receive hook on the server side. Here's a basic outline of the process:
+
+    Create a Post-Receive Hook:
+    On your EC2 instance where the Git repository is hosted, navigate to the hooks directory inside your repository:
+
+    bash
+
+cd /var/www/test/test-repo.git/hooks
+
+Create a file named post-receive:
+
+bash
+
+touch post-receive
+
+Edit the Post-Receive Hook:
+Open the post-receive file in a text editor and add the following content:
+
+bash
+
+#!/bin/bash
+GIT_WORK_TREE=/var/www/test/deployed-folder git checkout -f
+
+This script sets the working tree to the deployment folder (/var/www/test/deployed-folder) and checks out the latest changes. You can customize this script based on your deployment requirements.
+
+Make the script executable:
+
+bash
+
+chmod +x post-receive
+
+Create a Deployment Folder:
+Create the deployment folder if it doesn't exist:
+
+bash
+
+mkdir -p /var/www/test/deployed-folder
+
+Ensure that the deployment folder has the necessary permissions:
+
+bash
+
+sudo chown -R ec2-user:ec2-user /var/www/test/deployed-folder
+
+Update the Git Remote URL:
+If you haven't already, update your local repository's remote URL to use the production remote you created earlier:
+
+bash
+
+git remote set-url production ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
+
+Push Changes:
+Push changes to trigger the post-receive hook:
+
+bash
+
+    git push production master
+
+    This will deploy the latest changes to the deployment folder.
+
+Now, every time you push changes to the master branch, the post-receive hook will automatically deploy the changes to the specified folder on your EC2 instance.
+
+Feel free to customize the post-receive script based on your deployment needs, such as running build scripts, restarting services, or any other tasks specific to your application.
+)
+
+
+Verify your files:
+
+On your EC2 instance, navigate to the my-repo.git directory.
+Run the command git ls-remote. This will list all the branches and commits available in the repository.
+You should see your local master branch listed here.
+
+
+Add a remote to your local git repo
+
+ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
+
+git remote add prod ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
+
+
+git add .
+git commit -m "Test commit 2"
+
+# Push changes to 'prod' remote
+git push prod master
