@@ -270,3 +270,25 @@ git commit -m "Test commit 2"
 git push prod master
 
 This is a new change.
+
+
+
+#!/bin/bash
+
+# Set the deployment directory
+DEPLOY_DIR=/var/www/test/deployed-folder
+
+# Read the branch name and old revision from stdin
+while read oldrev newrev refname; do
+    # Extract the branch name from the refname
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+
+    # Only deploy the master branch
+    if [ "$branch" = "master" ]; then
+        # Deploy the changes to the specified directory
+        GIT_WORK_TREE=$DEPLOY_DIR git checkout -f $branch
+        echo "Changes deployed to $DEPLOY_DIR"
+    else
+        echo "Not deploying changes for branch $branch"
+    fi
+done
