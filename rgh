@@ -263,7 +263,6 @@ ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
 
 git remote add prod ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git
 
-
 git add .
 git commit -m "Test commit 2"
 
