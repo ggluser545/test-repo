@@ -292,3 +292,27 @@ while read oldrev newrev refname; do
         echo "Not deploying changes for branch $branch"
     fi
 done
+
+
+#!/bin/bash
+
+# Set the deployment directory
+DEPLOY_DIR=/var/www/test/deployed-folder
+
+# Read the branch name from the push event data
+branch="$1"
+
+# Only deploy the master branch
+if [[ "$branch" == "master" ]]; then
+  # Update the deployment directory on the EC2 instance
+  ssh ec2-user@3.111.232.13 GIT_WORK_TREE=$DEPLOY_DIR git checkout -f $branch
+
+  # Restart services or perform other deployment tasks (optional)
+  # ...
+
+  echo "Changes deployed to $DEPLOY_DIR on EC2 instance"
+else
+  echo "Skipping deployment for branch $branch"
+fi
+
+exit 0
