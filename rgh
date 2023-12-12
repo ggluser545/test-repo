@@ -1,0 +1,13 @@
+created a server ec2
+
+create a local directory to work on 
+
+create a private repo in github
+
+
+Initializing a local Git repository
+
+Run the command git init. This initializes a Git repository in the current directory.
+Add your test files to the staging area with git add ..
+Commit the changes with a descriptive message using git commit -m "Adding test files for AWS deployment".
+
