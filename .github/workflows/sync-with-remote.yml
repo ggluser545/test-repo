@@ -3,7 +3,7 @@ name: Sync with Remote
 on:
   push:
     branches:
-      - master 
+      - master  # Change this to your master branch name
 
 jobs:
   sync-with-remote:
@@ -14,12 +14,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Add SSH key
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+        run: echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
 
       - name: Add Remote
         run: git remote add production ec2-user@13.200.152.101:/var/www/test/test-repo.git
+        # Replace "remote-name" with your desired remote name and update the path to your repository
 
       - name: Push to Remote
-        run: git push production master 
+        run: git push production master
