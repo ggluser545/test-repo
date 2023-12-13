@@ -9,25 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check for existing agent
+      - name: Push the changes to Production repo
         run: |
-          if ps aux | grep -v grep | grep ssh-agent; then
-            echo "Existing SSH agent found. Stopping it...";
-            pkill ssh-agent;
-          fi
-      - name: Set SSH socket and PID variables
-        run: |
-          export SSH_AUTH_SOCK=/tmp/ssh-XXXXXXFUOwJ2/agent.1754
-          export SSH_AGENT_PID=1757
-      - name: Verify agent connection
-        run: |
-          if ! ssh-add -l; then
-            echo "Error: Could not connect to SSH agent";
-            exit 1;
-          fi
-      - name: Add SSH key to agent
-        run: echo "$SSH_PRIVATE_KEY" | ssh-add -i -
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_KEY }}
-      - run: git push prod-1 HEAD # Push changes to the production remote named 'prod-1'
-
+          git remote add prod-1 ssh://ec2-user@13.200.152.101:/var/www/test/test-repo.git
+      - run: git push prod-1 master
