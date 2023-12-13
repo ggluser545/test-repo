@@ -11,10 +11,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Add production remote and update known hosts
         run: |
-          mkdir -p ~/.ssh
-          echo "$PROD_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa 13.200.152.101 >> ~/.ssh/known_hosts
           git remote add prod-1 ssh://ec2-user@13.200.152.101:/var/www/test/test-repo.git
       - name: Push to Production
         run: |
