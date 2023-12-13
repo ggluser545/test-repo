@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Add production remote
+        run: |
+          git remote add prod-1 ssh://ec2-user@13.200.152.101:/var/www/test/test-repo.git
       - run: git push prod-1 master 
 
 env:
