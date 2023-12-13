@@ -3,7 +3,7 @@ name: Sync with Remote
 on:
   push:
     branches:
-      - master  # Change this to your master branch name
+      - master 
 
 jobs:
   sync-with-remote:
@@ -13,28 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create SSH directory
-        run: mkdir -p $HOME/.ssh
-
       - name: Add SSH key
-        run: |
-          echo "${{ secrets.PROD_SSH_KEY }}" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
-
-      - name: Ensure known_hosts file exists
-        run: touch $HOME/.ssh/known_hosts
-
-      - name: Remove Old Key from Known Hosts
-        run: ssh-keygen -R 13.200.152.101
-        # Replace "13.200.152.101" with your server's IP address or domain
-
-      - name: Record the Updated Key
-        run: ssh-keyscan -t rsa 13.200.152.101 >> $HOME/.ssh/known_hosts
-        # Replace "13.200.152.101" with your server's IP address or domain
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add Remote
         run: git remote add production ec2-user@13.200.152.101:/var/www/test/test-repo.git
-        # Replace "remote-name" with your desired remote name and update the path to your repository
 
       - name: Push to Remote
-        run: git push production master  # Change "master" to your master branch name
+        run: git push production master 
