@@ -318,3 +318,90 @@ fi
 exit 0
 
 This is again a new change.
+
+
+$ git remote -v
+origin  https://github.com/ggluser545/test-repo.git (fetch)
+origin  https://github.com/ggluser545/test-repo.git (push)
+prod    ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git (fetch)
+prod    ssh://ec2-user@3.111.232.13:/var/www/test/test-repo.git (push)
+
+
+
+
+
+sudo git init --bare test-repo.git
+
+(Initialized empty Git repository in /var/www/test/test-repo.git/)
+
+sudo chown -R ec2-user:ec2-user test-repo.git
+
+hook 
+sudo vim post-receive
+
+Make the script executable:
+
+bash
+
+sudo chmod +x post-receive
+
+Create a Deployment Folder:
+Create the deployment folder if it doesn't exist:
+
+bash
+
+sudo mkdir -p /var/www/test/deployed-folder
+
+Ensure that the deployment folder has the necessary permissions:
+
+bash
+
+sudo chown -R ec2-user:ec2-user /var/www/test/deployed-folder
+
+
+13.200.152.101
+
+3.111.232.13
+
+Add a remote to your local git repo
+
+ssh://ec2-user@13.200.152.101:/var/www/test/test-repo.git
+
+git remote add prod-1 ssh://ec2-user@13.200.152.101:/var/www/test/test-repo.git
+
+ssh should also be enabled
+
+
+ssh-keygen -t rsa -b 4096 -C "13.200.152.101" -f ./test-server-2
+
+this gave : test-server-2.pub, test-server-2
+
+add test-server-2 to ssh
+
+~/.ssh
+
+copy test-server-2 C:\Users\Samudra\.ssh
+
+add this to the ssh agent
+
+git bash
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/test-server-2
+
+ssh-add -l
+
+also modify the ssh key in the server (ec2)
+
+cd ~/.ssh
+
+authorized_keys
+
+add the pub file content
+
+azure pipelines
+
+git hub actions
+
+jenkins
+
