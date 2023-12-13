@@ -13,8 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create SSH directory
+        run: mkdir -p $HOME/.ssh
+
       - name: Add SSH key
-        run: echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+        run: echo "${{ secrets.PROD_SSH_KEY }}" > $HOME/.ssh/id_rsa && chmod 600 $HOME/.ssh/id_rsa
 
       - name: Add Remote
         run: git remote add production ec2-user@13.200.152.101:/var/www/test/test-repo.git
