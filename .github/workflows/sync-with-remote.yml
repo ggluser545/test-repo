@@ -1,0 +1,25 @@
+name: Sync with Remote
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  sync-with-remote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Add Remote
+        run: git remote add production ec2-user@13.200.152.101:/var/www/test/test-repo.git
+
+      - name: Push to Remote
+        run: git push production master 
