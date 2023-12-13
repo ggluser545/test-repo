@@ -10,19 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify SSH fingerprint
-        run: |
-          ssh-keyscan -t ec2-user@13.200.152.101 > /tmp/remote_fingerprint
-          if ! cmp /tmp/remote_fingerprint ~/.ssh/known_hosts; then
-            echo "Host key verification failed. Adding server to known_hosts..."
-            ssh-keyscan -t ec2-user@13.200.152.101 >> ~/.ssh/known_hosts
-          fi
       - name: Add SSH key
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Add Remote
-        run: git remote add production ec2-user@13.200.152.101:/var/www/test/test-repo.git
-      - name: Push to Remote
-        run: git push production HEAD
-
+        run: |
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/test-server-2 && chmod 600 ~/.ssh/test-server-2
+          ssh-add ~/.ssh/test-server-2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Verify connection
+        run: |
+          if ! ssh -o StrictHostKeyChecking=no ec2-user@13.200.152.101 exit 0; then
+            echo "Connection failed. Please verify SSH configuration."
+            exit 1
+          fi
+          echo "Connection established successfully!"
+      - name: Push to Remote (Optional)
+        run: git push production master
