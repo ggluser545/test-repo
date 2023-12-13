@@ -21,4 +21,4 @@ jobs:
         # Replace "remote-name" with your desired remote name and update the path to your repository
 
       - name: Push to Remote
-        run: git push production master
+        run: git push production master  # Change "master" to your master branch name
