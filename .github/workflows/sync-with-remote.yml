@@ -12,8 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Add SSH key
         run: |
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/test-server-2 && chmod 600 ~/.ssh/test-server-2
-          ssh-add ~/.ssh/test-server-2
+          echo "$SSH_PRIVATE_KEY"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Verify connection
@@ -23,5 +22,5 @@ jobs:
             exit 1
           fi
           echo "Connection established successfully!"
-      - name: Push to Remote (Optional)
+      - name: Push to Remote
         run: git push production master
