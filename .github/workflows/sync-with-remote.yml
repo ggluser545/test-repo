@@ -21,6 +21,9 @@ jobs:
           echo "${{ secrets.PROD_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
 
+      - name: Ensure known_hosts file exists
+        run: touch $HOME/.ssh/known_hosts
+
       - name: Remove Old Key from Known Hosts
         run: ssh-keygen -R 13.200.152.101
         # Replace "13.200.152.101" with your server's IP address or domain
