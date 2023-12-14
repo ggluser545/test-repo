@@ -1,3 +1,2 @@
 This is new file 2.
 A line was added.
-Another line was added.
