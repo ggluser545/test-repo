@@ -5,3 +5,7 @@ git push https://github.com/ggluser545/test-repo.git master
 
 git config --global user.name "ggluser545"
 git config --global user.email "ggluser545@gmail.com"
+
+
+git clone test-repo.git test-repo-working-directory
+cd test-repo-working-directory
