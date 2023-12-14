@@ -181,6 +181,7 @@ sudo git init --bare test-repo.git
 
 Initialized empty Git repository in /var/www/test/test-repo.git/
 
+sudo git init --bare test-repo.git
 sudo chown -R ec2-user:ec2-user test-repo.git
 
 (
@@ -404,3 +405,30 @@ azure pipelines
 git hub actions
 
 jenkins
+
+#!/bin/bash
+
+# Set the deployment directory
+DEPLOY_DIR=/var/www/test/deployed-folder
+
+# Read the branch name, old revision, and new revision from stdin
+while read oldrev newrev refname; do
+  # Extract the branch name from the refname
+  branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+
+  # Only deploy the master branch
+  if [[ "$refname" =~ refs/heads/master ]]; then
+    # Get the latest commit message
+    commit_message=$(git log --pretty=format:%B -n 1 $newrev)
+
+    # Deploy the changes to the specified directory
+    GIT_WORK_TREE=$DEPLOY_DIR git checkout -f $branch
+
+    # Echo deployment information with commit message
+    echo "Changes deployed to $DEPLOY_DIR with commit message:"
+    echo "$commit_message"
+
+  else
+    echo "Not deploying changes for branch $branch"
+  fi
+done
