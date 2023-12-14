@@ -1,2 +1,7 @@
 This is new file 2.
 A line was added.
+git push https://github.com/username/repository.git branch-name
+git push https://github.com/ggluser545/test-repo.git master
+
+git config --global user.name "ggluser545"
+git config --global user.email "ggluser545@gmail.com"
