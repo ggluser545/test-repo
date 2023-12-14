@@ -1,0 +1,26 @@
+name: Sync with Remote
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sync-with-remote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add SSH key
+        run: |
+          echo "$SSH_PRIVATE_KEY"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Verify connection
+        run: |
+          if ! ssh -o StrictHostKeyChecking=no ec2-user@13.200.152.101 exit 0; then
+            echo "Connection failed. Please verify SSH configuration."
+            exit 1
+          fi
+          echo "Connection established successfully!"
+      - name: Push to Remote
+        run: git push production master
